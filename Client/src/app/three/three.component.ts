@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Component({
   selector: 'app-three',
@@ -13,6 +14,7 @@ export class ThreeComponent implements OnInit {
   username = '';
   loginFailed = false;
   userExists = false;
+  jwtDecoder = new JwtHelperService();
   constructor(private http: HttpClient) { }
 
   ngOnInit() {
@@ -21,7 +23,8 @@ export class ThreeComponent implements OnInit {
   checkLogin() {
     const token = localStorage.getItem('token');
     if (token) {
-      this.username = jwt_decode(token)['unique_name'];
+      const info = this.jwtDecoder.decodeToken(token);
+      this.username = info['unique_name'];
     }
     return token !== null;
   }
@@ -53,5 +56,6 @@ export class ThreeComponent implements OnInit {
 
   logout() {
     localStorage.removeItem('token');
+    this.setActive(0);
   }
 }
